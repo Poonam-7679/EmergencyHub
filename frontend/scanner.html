@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QR Scanner — EmergencyHub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        /* ============================================================
+           COMPLETE QR SCANNER CSS
+           ============================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #E11D3F;
+            --primary-dark: #B0102E;
+            --primary-light: #FF6B7A;
+            --secondary: #0A0F1E;
+            --bg: #F5F7FA;
+            --card: #FFFFFF;
+            --text: #0A0F1E;
+            --text-secondary: #475569;
+            --text-muted: #94A3B8;
+            --border: #E8ECF0;
+            --shadow: 0 12px 48px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 24px 64px rgba(0, 0, 0, 0.10);
+            --radius: 16px;
+            --radius-full: 9999px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--secondary);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .scanner-container {
+            max-width: 480px;
+            width: 100%;
+            background: #1E293B;
+            border-radius: var(--radius);
+            padding: 30px;
+        }
+
+        /* ============================================================
+           HEADER
+           ============================================================ */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header h1 i {
+            color: var(--primary);
+        }
+
+        .header .back-btn {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-full);
+            color: #94A3B8;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .header .back-btn:hover {
+            border-color: var(--primary);
+            color: #fff;
+        }
+
+        /* ============================================================
+           SCANNER BOX
+           ============================================================ */
+        .scanner-box {
+            background: #0A0F1E;
+            border-radius: var(--radius);
+            padding: 40px;
+            text-align: center;
+            border: 2px dashed #334155;
+            position: relative;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .scanner-box .icon {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+
+        .scanner-box .icon.scanning {
+            animation: scanPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes scanPulse {
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .scanner-box .status-text {
+            color: #94A3B8;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+
+        .scanner-box .status-text.success {
+            color: #22C55E;
+        }
+
+        .scanner-box .status-text.error {
+            color: #EF4444;
+        }
+
+        /* ============================================================
+           BUTTONS
+           ============================================================ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border-radius: var(--radius-full);
+            border: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #22C55E;
+            color: #fff;
+        }
+
+        .btn-success:hover {
+            background: #16A34A;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #334155;
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #334155;
+            color: #94A3B8;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: #fff;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .btn-group .btn {
+            flex: 1;
+        }
+
+        /* ============================================================
+           RESULT AREA
+           ============================================================ */
+        #resultArea {
+            display: none;
+            margin-top: 16px;
+        }
+
+        .result-card {
+            background: #0A0F1E;
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .result-card .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .result-card .row:last-child {
+            border-bottom: none;
+        }
+
+        .result-card .label {
+            color: #94A3B8;
+            font-size: 0.8rem;
+        }
+
+        .result-card .value {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .result-card .value.highlight {
+            color: var(--primary);
+        }
+
+        /* ============================================================
+           RECEIPT PREVIEW
+           ============================================================ */
+        .receipt-preview {
+            background: #0A0F1E;
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-top: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            display: none;
+        }
+
+        .receipt-preview .title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .receipt-preview .title i {
+            color: var(--primary);
+        }
+
+        .receipt-preview .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 0.85rem;
+        }
+
+        .receipt-preview .row:last-child {
+            border-bottom: none;
+        }
+
+        .receipt-preview .label {
+            color: #94A3B8;
+        }
+
+        .receipt-preview .value {
+            font-weight: 600;
+        }
+
+        .receipt-preview .qrcode {
+            display: flex;
+            justify-content: center;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .receipt-preview .qrcode img {
+            width: 120px;
+            height: 120px;
+            background: #fff;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        /* ============================================================
+           MANUAL INPUT
+           ============================================================ */
+        .manual-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .manual-input input {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: var(--radius-full);
+            border: 1px solid #334155;
+            background: #0A0F1E;
+            color: #fff;
+            font-size: 0.9rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .manual-input input:focus {
+            border-color: var(--primary);
+        }
+
+        .manual-input input::placeholder {
+            color: #64748B;
+        }
+
+        .manual-input .btn {
+            width: auto;
+            padding: 12px 20px;
+            min-width: 80px;
+        }
+
+        /* ============================================================
+           STATUS BADGE
+           ============================================================ */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-badge.success {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22C55E;
+        }
+
+        .status-badge.pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: #F59E0B;
+        }
+
+        .status-badge.failed {
+            background: rgba(239, 68, 68, 0.15);
+            color: #EF4444;
+        }
+
+        /* ============================================================
+           TOAST
+           ============================================================ */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+        }
+
+        .toast {
+            background: var(--secondary);
+            color: #fff;
+            padding: 14px 24px;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.4s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 280px;
+            max-width: 90%;
+        }
+
+        .toast.success i {
+            color: #22C55E;
+        }
+        .toast.error i {
+            color: #EF4444;
+        }
+        .toast.info i {
+            color: #3B82F6;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 480px) {
+            .scanner-container {
+                padding: 16px;
+            }
+
+            .scanner-box {
+                padding: 24px;
+                min-height: 200px;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .manual-input {
+                flex-direction: column;
+            }
+
+            .manual-input .btn {
+                width: 100%;
+            }
+
+            .header h1 {
+                font-size: 1.2rem;
+            }
+
+            .toast {
+                min-width: auto;
+                width: 90%;
+                font-size: 0.85rem;
+                padding: 12px 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scanner-container">
+
+        <!-- ============================================================
+        HEADER
+        ============================================================ -->
+        <div class="header">
+            <h1><i class="fas fa-qrcode"></i> QR Scanner</h1>
+            <a href="../index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
+        </div>
+
+        <p style="color:#94A3B8;font-size:0.9rem;margin-bottom:20px;">
+            Scan QR code to verify payment or view receipt
+        </p>
+
+        <!-- ============================================================
+        SCANNER BOX
+        ============================================================ -->
+        <div class="scanner-box" id="scannerBox">
+            <div class="icon scanning" id="scanIcon">
+                <i class="fas fa-qrcode"></i>
+            </div>
+            <div class="status-text" id="scanStatus">Position QR code in frame</div>
+            <button class="btn btn-primary" id="startScanBtn">
+                <i class="fas fa-camera"></i> Start Scanning
+            </button>
+        </div>
+
+        <!-- ============================================================
+        RESULT AREA
+        ============================================================ -->
+        <div id="resultArea">
+            <div class="result-card" id="qrResult"></div>
+
+            <div class="btn-group">
+                <button class="btn btn-success" id="verifyBtn">
+                    <i class="fas fa-check"></i> Verify Payment
+                </button>
+                <button class="btn btn-secondary" id="clearBtn">
+                    <i class="fas fa-times"></i> Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- ============================================================
+        MANUAL INPUT
+        ============================================================ -->
+        <div class="manual-input">
+            <input type="text" id="manualUpiInput" placeholder="Enter UPI ID or Transaction ID" />
+            <button class="btn btn-primary" id="manualVerifyBtn">
+                <i class="fas fa-search"></i> Verify
+            </button>
+        </div>
+
+        <!-- ============================================================
+        RECEIPT PREVIEW
+        ============================================================ -->
+        <div class="receipt-preview" id="receiptPreview">
+            <div class="title"><i class="fas fa-file-invoice"></i> Receipt</div>
+            <div id="receiptContent">
+                <div class="row"><span class="label">Receipt Number</span><span class="value" id="receiptNumber">-</span></div>
+                <div class="row"><span class="label">Service</span><span class="value" id="receiptService">-</span></div>
+                <div class="row"><span class="label">Amount</span><span class="value" id="receiptAmount">-</span></div>
+                <div class="row"><span class="label">Platform Fee</span><span class="value" id="receiptFee">-</span></div>
+                <div class="row"><span class="label">Total</span><span class="value" id="receiptTotal">-</span></div>
+                <div class="row"><span class="label">Payment Method</span><span class="value" id="receiptMethod">-</span></div>
+                <div class="row"><span class="label">Status</span><span class="value" id="receiptStatus">-</span></div>
+                <div class="row"><span class="label">Warranty</span><span class="value" id="receiptWarranty">-</span></div>
+                <div class="row"><span class="label">Date</span><span class="value" id="receiptDate">-</span></div>
+                <div class="qrcode" id="receiptQR">
+                    <img src="" alt="Receipt QR Code" id="receiptQRImage" />
+                </div>
+            </div>
+            <button class="btn btn-success" style="margin-top:12px;" id="downloadReceiptBtn">
+                <i class="fas fa-download"></i> Download PDF
+            </button>
+        </div>
+
+        <!-- ============================================================
+        PAYMENT HISTORY
+        ============================================================ -->
+        <div style="margin-top:16px;">
+            <button class="btn btn-outline" id="historyBtn">
+                <i class="fas fa-history"></i> View Payment History
+            </button>
+            <div id="historyList" style="display:none;margin-top:12px;"></div>
+        </div>
+
+    </div>
+
+    <!-- ============================================================
+    TOAST
+    ============================================================ -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ============================================================
+    JAVASCRIPT
+    ============================================================ -->
+    <script>
+        // ============================================================
+        // CONFIGURATION
+        // ============================================================
+        const API_URL = window.location.hostname === 'localhost'
+            ? 'http://localhost:5000/api'
+            : 'https://api.emergencyhub.in/api';
+
+        let scannedData = null;
+        let isScanning = false;
+
+        // ============================================================
+        // DOM ELEMENTS
+        // ============================================================
+        const startScanBtn = document.getElementById('startScanBtn');
+        const scanStatus = document.getElementById('scanStatus');
+        const scanIcon = document.getElementById('scanIcon');
+        const resultArea = document.getElementById('resultArea');
+        const qrResult = document.getElementById('qrResult');
+        const verifyBtn = document.getElementById('verifyBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const manualUpiInput = document.getElementById('manualUpiInput');
+        const manualVerifyBtn = document.getElementById('manualVerifyBtn');
+        const receiptPreview = document.getElementById('receiptPreview');
+        const downloadReceiptBtn = document.getElementById('downloadReceiptBtn');
+        const historyBtn = document.getElementById('historyBtn');
+        const historyList = document.getElementById('historyList');
+        const toastContainer = document.getElementById('toastContainer');
+
+        // Receipt fields
+        const receiptNumber = document.getElementById('receiptNumber');
+        const receiptService = document.getElementById('receiptService');
+        const receiptAmount = document.getElementById('receiptAmount');
+        const receiptFee = document.getElementById('receiptFee');
+        const receiptTotal = document.getElementById('receiptTotal');
+        const receiptMethod = document.getElementById('receiptMethod');
+        const receiptStatus = document.getElementById('receiptStatus');
+        const receiptWarranty = document.getElementById('receiptWarranty');
+        const receiptDate = document.getElementById('receiptDate');
+        const receiptQRImage = document.getElementById('receiptQRImage');
+
+        // ============================================================
+        // GENERATE SAMPLE QR DATA
+        // ============================================================
+        function generateSampleQRData() {
+            return {
+                upiId: 'emergencyhub@hdfc',
+                amount: 499,
+                orderId: 'UPI_' + Date.now(),
+                merchantName: 'EmergencyHub',
+                timestamp: new Date().toISOString()
+            };
+        }
+
+        // ============================================================
+        // START SCANNING
+        // ============================================================
+        startScanBtn.addEventListener('click', () => {
+            if (isScanning) return;
+
+            isScanning = true;
+            scanIcon.classList.add('scanning');
+            scanStatus.textContent = '🔍 Scanning...';
+            scanStatus.className = 'status-text';
+            startScanBtn.disabled = true;
+            startScanBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Scanning...';
+
+            // Simulate QR scan (In production, use camera API)
+            setTimeout(() => {
+                const data = generateSampleQRData();
+                handleQRScan(data);
+            }, 2500);
+        });
+
+        // ============================================================
+        // HANDLE QR SCAN
+        // ============================================================
+        function handleQRScan(data) {
+            isScanning = false;
+            scanIcon.classList.remove('scanning');
+            scanStatus.textContent = '✅ QR Scanned Successfully!';
+            scanStatus.className = 'status-text success';
+            startScanBtn.disabled = false;
+            startScanBtn.innerHTML = '<i class="fas fa-camera"></i> Scan Again';
+
+            scannedData = data;
+            resultArea.style.display = 'block';
+
+            qrResult.innerHTML = `
+                <div class="row">
+                    <span class="label">UPI ID</span>
+                    <span class="value highlight">${data.upiId}</span>
+                </div>
+                <div class="row">
+                    <span class="label">Amount</span>
+                    <span class="value">₹${data.amount}</span>
+                </div>
+                <div class="row">
+                    <span class="label">Order ID</span>
+                    <span class="value">${data.orderId}</span>
+                </div>
+                <div class="row">
+                    <span class="label">Merchant</span>
+                    <span class="value">${data.merchantName}</span>
+                </div>
+                <div class="row">
+                    <span class="label">Status</span>
+                    <span class="value"><span class="status-badge pending">⏳ Pending</span></span>
+                </div>
+            `;
+
+            showToast('✅ QR scanned successfully!', 'success');
+        }
+
+        // ============================================================
+        // VERIFY PAYMENT
+        // ============================================================
+        verifyBtn.addEventListener('click', async () => {
+            if (!scannedData) {
+                showToast('Please scan a QR first', 'error');
+                return;
+            }
+
+            // Simulate verification
+            verifyBtn.disabled = true;
+            verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+
+            setTimeout(() => {
+                // Update status
+                qrResult.innerHTML = `
+                    <div class="row">
+                        <span class="label">UPI ID</span>
+                        <span class="value highlight">${scannedData.upiId}</span>
+                    </div>
+                    <div class="row">
+                        <span class="label">Amount</span>
+                        <span class="value">₹${scannedData.amount}</span>
+                    </div>
+                    <div class="row">
+                        <span class="label">Order ID</span>
+                        <span class="value">${scannedData.orderId}</span>
+                    </div>
+                    <div class="row">
+                        <span class="label">Merchant</span>
+                        <span class="value">${scannedData.merchantName}</span>
+                    </div>
+                    <div class="row">
+                        <span class="label">Status</span>
+                        <span class="value"><span class="status-badge success">✅ Verified</span></span>
+                    </div>
+                    <div class="row">
+                        <span class="label">Commission</span>
+                        <span class="value" style="color:#F59E0B;">-₹49</span>
+                    </div>
+                    <div class="row">
+                        <span class="label">Net Amount</span>
+                        <span class="value" style="color:#22C55E;">₹${scannedData.amount - 49}</span>
+                    </div>
+                    <div class="row">
+                        <span class="label">Founder UPI</span>
+                        <span class="value highlight">emergencyhub@hdfc</span>
+                    </div>
+                `;
+
+                // Generate receipt
+                generateReceipt();
+
+                verifyBtn.disabled = false;
+                verifyBtn.innerHTML = '<i class="fas fa-check"></i> Verified ✓';
+                showToast('✅ Payment verified successfully! Commission ₹49 deducted.', 'success');
+
+            }, 1500);
+        });
+
+        // ============================================================
+        // GENERATE RECEIPT
+        // ============================================================
+        function generateReceipt() {
+            const receiptData = {
+                number: 'RCP-' + Date.now().toString().slice(-8),
+                service: 'Emergency Service',
+                amount: 499,
+                fee: 49,
+                total: 499,
+                method: 'UPI',
+                status: 'Paid',
+                warranty: '30 days',
+                date: new Date().toLocaleDateString('en-IN', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                }),
+                qrData: `upi://pay?pa=emergencyhub@hdfc&pn=EmergencyHub&am=499&cu=INR&tn=${scannedData?.orderId || 'UPI_123456'}`
+            };
+
+            // Update receipt fields
+            receiptNumber.textContent = receiptData.number;
+            receiptService.textContent = receiptData.service;
+            receiptAmount.textContent = '₹' + receiptData.amount;
+            receiptFee.textContent = '₹' + receiptData.fee;
+            receiptTotal.textContent = '₹' + receiptData.total;
+            receiptMethod.textContent = receiptData.method;
+            receiptStatus.innerHTML = `<span class="status-badge success">✅ ${receiptData.status}</span>`;
+            receiptWarranty.textContent = receiptData.warranty;
+            receiptDate.textContent = receiptData.date;
+
+            // Generate QR code image (simulated)
+            receiptQRImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(receiptData.qrData)}`;
+            receiptQRImage.alt = 'Receipt QR Code';
+
+            // Show receipt
+            receiptPreview.style.display = 'block';
+            showToast('🧾 Receipt generated successfully!', 'success');
+        }
+
+        // ============================================================
+        // DOWNLOAD RECEIPT
+        // ============================================================
+        downloadReceiptBtn.addEventListener('click', () => {
+            const receiptData = {
+                number: receiptNumber.textContent,
+                service: receiptService.textContent,
+                amount: receiptAmount.textContent,
+                fee: receiptFee.textContent,
+                total: receiptTotal.textContent,
+                method: receiptMethod.textContent,
+                status: 'Paid',
+                warranty: receiptWarranty.textContent,
+                date: receiptDate.textContent
+            };
+
+            // Generate PDF-like content
+            const content = `
+                ============================================
+                        EMERGENCYHUB RECEIPT
+                ============================================
+
+                Receipt Number : ${receiptData.number}
+                Date           : ${receiptData.date}
+                --------------------------------------------
+                Service        : ${receiptData.service}
+                Amount         : ${receiptData.amount}
+                Platform Fee   : ${receiptData.fee}
+                --------------------------------------------
+                TOTAL          : ${receiptData.total}
+                --------------------------------------------
+                Payment Method : ${receiptData.method}
+                Status         : ✅ ${receiptData.status}
+                Warranty       : ${receiptData.warranty}
+                --------------------------------------------
+                Thank you for choosing EmergencyHub!
+                Help is just 1 tap away.
+                ============================================
+            `;
+
+            // Download as text file (PDF simulation)
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `receipt_${receiptData.number}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+
+            showToast('📄 Receipt downloaded successfully!', 'success');
+        });
+
+        // ============================================================
+        // CLEAR
+        // ============================================================
+        clearBtn.addEventListener('click', () => {
+            scannedData = null;
+            resultArea.style.display = 'none';
+            qrResult.innerHTML = '';
+            receiptPreview.style.display = 'none';
+            scanStatus.textContent = 'Position QR code in frame';
+            scanStatus.className = 'status-text';
+            document.querySelector('#qrResult .status-badge')?.remove();
+            showToast('Cleared', 'info');
+        });
+
+        // ============================================================
+        // MANUAL UPI VERIFICATION
+        // ============================================================
+        manualVerifyBtn.addEventListener('click', () => {
+            const upiId = manualUpiInput.value.trim();
+            if (!upiId) {
+                showToast('Please enter UPI ID', 'error');
+                return;
+            }
+
+            // Simulate verification
+            const data = {
+                upiId: upiId,
+                amount: 499,
+                orderId: 'UPI_' + Date.now(),
+                merchantName: 'EmergencyHub',
+                timestamp: new Date().toISOString()
+            };
+
+            handleQRScan(data);
+            manualUpiInput.value = '';
+            showToast(`🔍 Searching for UPI: ${upiId}`, 'info');
+        });
+
+        // Enter key for manual verification
+        manualUpiInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                manualVerifyBtn.click();
+            }
+        });
+
+        // ============================================================
+        // PAYMENT HISTORY
+        // ============================================================
+        historyBtn.addEventListener('click', () => {
+            if (historyList.style.display === 'block') {
+                historyList.style.display = 'none';
+                return;
+            }
+
+            // Sample history data
+            const historyData = [
+                { id: 'H001', amount: 499, status: 'success', date: '2024-06-10', method: 'UPI' },
+                { id: 'H002', amount: 499, status: 'pending', date: '2024-06-11', method: 'Cash' },
+                { id: 'H003', amount: 499, status: 'success', date: '2024-06-12', method: 'Razorpay' },
+            ];
+
+            let html = `
+                <div style="background:#0A0F1E;border-radius:12px;padding:12px;margin-top:8px;">
+                    <div style="font-weight:600;margin-bottom:8px;">Recent Payments</div>
+            `;
+
+            historyData.forEach(h => {
+                const statusClass = h.status === 'success' ? 'success' : 'pending';
+                const statusText = h.status === 'success' ? '✅ Paid' : '⏳ Pending';
+
+                html += `
+                    <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.85rem;">
+                        <span>${h.id}</span>
+                        <span>₹${h.amount}</span>
+                        <span style="color:#94A3B8;">${h.method}</span>
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                        <span style="color:#94A3B8;font-size:0.7rem;">${h.date}</span>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            historyList.innerHTML = html;
+            historyList.style.display = 'block';
+        });
+
+        // ============================================================
+        // TOAST
+        // ============================================================
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            const icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' :
+                'fa-info-circle';
+            toast.innerHTML = `
+                <i class="fas ${icon}"></i>
+                <span>${message}</span>
+            `;
+            toastContainer.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(100px)';
+                setTimeout(() => toast.remove(), 400);
+            }, 4000);
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        console.log('🚀 QR Scanner Ready!');
+        console.log('📱 Scan QR or enter UPI ID manually');
+        console.log('💰 ₹49 commission will be deducted automatically');
+
+        // Check for token
+        const token = localStorage.getItem('token');
+        if (!token) {
+            showToast('⚠️ Please login first', 'error');
+        }
+
+        // Expose functions globally
+        window.showToast = showToast;
+        window.handleQRScan = handleQRScan;
+    </script>
+
+</body>
+</html>

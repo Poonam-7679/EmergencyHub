@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EmergencyHub — Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        /* ============================================================
+           COMPLETE ADMIN DASHBOARD CSS
+           ============================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #E11D3F;
+            --primary-dark: #B0102E;
+            --primary-light: #FF6B7A;
+            --secondary: #0A0F1E;
+            --bg: #F5F7FA;
+            --card: #FFFFFF;
+            --text: #0A0F1E;
+            --text-secondary: #475569;
+            --text-muted: #94A3B8;
+            --border: #E8ECF0;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            --shadow-hover: 0 8px 40px rgba(0, 0, 0, 0.08);
+            --radius: 16px;
+            --radius-full: 9999px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ============================================================
+           LOGIN OVERLAY
+           ============================================================ */
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .login-box {
+            background: var(--card);
+            padding: 40px;
+            border-radius: var(--radius);
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-box .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 24px;
+        }
+
+        .login-box .logo span {
+            color: var(--primary);
+        }
+
+        .login-box h2 {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .login-box p {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: var(--radius-full);
+            border: 2px solid var(--border);
+            font-size: 1rem;
+            margin-bottom: 12px;
+            transition: var(--transition);
+        }
+
+        .login-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .login-box .btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: var(--radius-full);
+            border: none;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .login-box .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .login-box .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* ============================================================
+           CONTAINER
+           ============================================================ */
+        .dashboard-container {
+            display: none;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* ============================================================
+           HEADER
+           ============================================================ */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.4rem;
+            font-weight: 800;
+        }
+
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            background: var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.2rem;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .logo small {
+            font-size: 0.75rem;
+            font-weight: 400;
+            color: var(--text-muted);
+            margin-left: 8px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: var(--radius-full);
+            border: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-success {
+            background: #22C55E;
+            color: #fff;
+        }
+
+        .btn-success:hover {
+            background: #16A34A;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #EF4444;
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background: #DC2626;
+        }
+
+        .btn-warning {
+            background: #F59E0B;
+            color: #fff;
+        }
+
+        .btn-warning:hover {
+            background: #D97706;
+            transform: translateY(-2px);
+        }
+
+        .btn-info {
+            background: #3B82F6;
+            color: #fff;
+        }
+
+        .btn-info:hover {
+            background: #2563EB;
+            transform: translateY(-2px);
+        }
+
+        /* ============================================================
+           TABS
+           ============================================================ */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 12px;
+        }
+
+        .tab-btn {
+            padding: 10px 24px;
+            border: 2px solid transparent;
+            border-radius: var(--radius-full);
+            background: transparent;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+
+        .tab-btn:hover {
+            border-color: var(--border);
+            color: var(--text);
+        }
+
+        .tab-btn.active {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(225, 29, 63, 0.04);
+        }
+
+        .tab-btn i {
+            margin-right: 8px;
+        }
+
+        /* ============================================================
+           STATS
+           ============================================================ */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .stat-card .icon {
+            float: right;
+            font-size: 1.8rem;
+            opacity: 0.15;
+            color: var(--primary);
+        }
+
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--text);
+            line-height: 1.2;
+        }
+
+        .stat-card .label {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            margin-top: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-card .trend {
+            display: inline-block;
+            margin-top: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: var(--radius-full);
+        }
+
+        .stat-card .trend.up {
+            color: #16A34A;
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        .stat-card .trend.down {
+            color: #DC2626;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .stat-card .trend.neutral {
+            color: #F59E0B;
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        /* ============================================================
+           TAB CONTENT
+           ============================================================ */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ============================================================
+           TABLES
+           ============================================================ */
+        .table-container {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            overflow-x: auto;
+            margin-bottom: 24px;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .table-header h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .table-header h2 i {
+            color: var(--primary);
+        }
+
+        .table-filters {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .table-filters select,
+        .table-filters input {
+            padding: 8px 14px;
+            border-radius: var(--radius-full);
+            border: 1px solid var(--border);
+            font-size: 0.8rem;
+            background: #fff;
+            color: var(--text);
+        }
+
+        .table-filters select:focus,
+        .table-filters input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        thead {
+            background: var(--bg);
+        }
+
+        th {
+            text-align: left;
+            padding: 12px 12px;
+            font-weight: 600;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            border-bottom: 2px solid var(--border);
+        }
+
+        td {
+            padding: 12px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:hover td {
+            background: rgba(225, 29, 63, 0.02);
+        }
+
+        /* ============================================================
+           BADGES
+           ============================================================ */
+        .badge {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: var(--radius-full);
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .badge-success {
+            background: #D1FAE5;
+            color: #059669;
+        }
+        .badge-pending {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+        .badge-danger {
+            background: #FEE2E2;
+            color: #DC2626;
+        }
+        .badge-primary {
+            background: #DBEAFE;
+            color: #2563EB;
+        }
+        .badge-warning {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+        .badge-info {
+            background: #DBEAFE;
+            color: #2563EB;
+        }
+
+        /* ============================================================
+           STATUS ACTIONS
+           ============================================================ */
+        .status-actions {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .status-actions button {
+            padding: 3px 10px;
+            border-radius: var(--radius-full);
+            border: none;
+            font-size: 0.6rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .status-actions button:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-sm-primary {
+            background: #DBEAFE;
+            color: #2563EB;
+        }
+        .btn-sm-success {
+            background: #D1FAE5;
+            color: #059669;
+        }
+        .btn-sm-danger {
+            background: #FEE2E2;
+            color: #DC2626;
+        }
+        .btn-sm-warning {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+
+        .btn-sm-primary:hover {
+            background: #2563EB;
+            color: #fff;
+        }
+        .btn-sm-success:hover {
+            background: #059669;
+            color: #fff;
+        }
+        .btn-sm-danger:hover {
+            background: #DC2626;
+            color: #fff;
+        }
+        .btn-sm-warning:hover {
+            background: #D97706;
+            color: #fff;
+        }
+
+        /* ============================================================
+           LOADING
+           ============================================================ */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .loading i {
+            font-size: 2rem;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        /* ============================================================
+           TOAST
+           ============================================================ */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            background: var(--secondary);
+            color: #fff;
+            padding: 14px 24px;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.4s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 280px;
+        }
+
+        .toast.success i {
+            color: #22C55E;
+        }
+        .toast.error i {
+            color: #EF4444;
+        }
+        .toast.warning i {
+            color: #F59E0B;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            .tabs {
+                flex-direction: column;
+                border-bottom: none;
+            }
+            .tab-btn {
+                width: 100%;
+                text-align: left;
+            }
+            .table-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .table-filters {
+                flex-direction: column;
+            }
+            .login-box {
+                padding: 24px;
+                margin: 0 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .stat-card .number {
+                font-size: 1.4rem;
+            }
+            .toast {
+                min-width: auto;
+                width: 90%;
+                font-size: 0.85rem;
+                padding: 12px 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+    LOGIN OVERLAY
+    ============================================================ -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-box">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-bolt"></i></div>
+                Emergency<span>Hub</span>
+            </div>
+            <h2>Admin Login</h2>
+            <p>Enter your credentials to access the dashboard</p>
+            <input type="email" id="loginEmail" placeholder="Admin Email" value="admin@emergencyhub.in" />
+            <input type="password" id="loginPassword" placeholder="Password" value="SecurePassword123" />
+            <button class="btn btn-primary" onclick="login()">
+                <i class="fas fa-arrow-right"></i> Login
+            </button>
+        </div>
+    </div>
+
+    <!-- ============================================================
+    TOAST CONTAINER
+    ============================================================ -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ============================================================
+    MAIN DASHBOARD
+    ============================================================ -->
+    <div class="dashboard-container" id="mainContent">
+
+        <!-- HEADER -->
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-bolt"></i></div>
+                Emergency<span>Hub</span>
+                <small>Admin Dashboard</small>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-outline" onclick="refreshData()">
+                    <i class="fas fa-sync"></i> Refresh
+                </button>
+                <button class="btn btn-success" onclick="exportAllData()">
+                    <i class="fas fa-download"></i> Export All
+                </button>
+                <button class="btn btn-danger" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- TABS -->
+        <div class="tabs" id="tabs">
+            <button class="tab-btn active" onclick="switchTab('overview')">
+                <i class="fas fa-chart-pie"></i> Overview
+            </button>
+            <button class="tab-btn" onclick="switchTab('users')">
+                <i class="fas fa-users"></i> Users
+            </button>
+            <button class="tab-btn" onclick="switchTab('providers')">
+                <i class="fas fa-user-tie"></i> Providers
+            </button>
+            <button class="tab-btn" onclick="switchTab('bookings')">
+                <i class="fas fa-calendar-check"></i> Bookings
+            </button>
+            <button class="tab-btn" onclick="switchTab('payments')">
+                <i class="fas fa-credit-card"></i> Payments
+            </button>
+            <button class="tab-btn" onclick="switchTab('waitlist')">
+                <i class="fas fa-list"></i> Waitlist
+            </button>
+        </div>
+
+        <!-- ============================================================
+        TAB 1: OVERVIEW
+        ============================================================ -->
+        <div class="tab-content active" id="tab-overview">
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="icon"><i class="fas fa-users"></i></div>
+                    <div class="number" id="statUsers">0</div>
+                    <div class="label">Total Users</div>
+                    <span class="trend up">↑ 12% this week</span>
+                </div>
+                <div class="stat-card">
+                    <div class="icon"><i class="fas fa-user-tie"></i></div>
+                    <div class="number" id="statProviders">0</div>
+                    <div class="label">Service Providers</div>
+                    <span class="trend up">↑ 8% this week</span>
+                </div>
+                <div class="stat-card">
+                    <div class="icon"><i class="fas fa-calendar-check"></i></div>
+                    <div class="number" id="statBookings">0</div>
+                    <div class="label">Total Bookings</div>
+                    <span class="trend up">↑ 25% this week</span>
+                </div>
+                <div class="stat-card">
+                    <div class="icon"><i class="fas fa-rupee-sign"></i></div>
+                    <div class="number" id="statRevenue">₹0</div>
+                    <div class="label">Total Revenue</div>
+                    <span class="trend up">↑ 18% this week</span>
+                </div>
+                <div class="stat-card">
+                    <div class="icon"><i class="fas fa-coin"></i></div>
+                    <div class="number" id="statCommission">₹0</div>
+                    <div class="label">Commission (₹49)</div>
+                    <span class="trend up">↑ 18% this week</span>
+                </div>
+                <div class="stat-card">
+                    <div class="icon"><i class="fas fa-wallet"></i></div>
+                    <div class="number" id="statPayout">₹0</div>
+                    <div class="label">Provider Payout</div>
+                    <span class="trend up">↑ 18% this week</span>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px;">
+                <div style="background:var(--card);padding:20px;border-radius:var(--radius);border:1px solid var(--border);text-align:center;">
+                    <i class="fas fa-user-plus" style="font-size:2rem;color:var(--primary);"></i>
+                    <h4 style="margin-top:8px;">New Users</h4>
+                    <p style="font-size:0.8rem;color:var(--text-secondary);">12 new this week</p>
+                </div>
+                <div style="background:var(--card);padding:20px;border-radius:var(--radius);border:1px solid var(--border);text-align:center;">
+                    <i class="fas fa-calendar-plus" style="font-size:2rem;color:#22C55E;"></i>
+                    <h4 style="margin-top:8px;">New Bookings</h4>
+                    <p style="font-size:0.8rem;color:var(--text-secondary);">28 this week</p>
+                </div>
+                <div style="background:var(--card);padding:20px;border-radius:var(--radius);border:1px solid var(--border);text-align:center;">
+                    <i class="fas fa-check-circle" style="font-size:2rem;color:#3B82F6;"></i>
+                    <h4 style="margin-top:8px;">Completed</h4>
+                    <p style="font-size:0.8rem;color:var(--text-secondary);">18 this week</p>
+                </div>
+                <div style="background:var(--card);padding:20px;border-radius:var(--radius);border:1px solid var(--border);text-align:center;">
+                    <i class="fas fa-star" style="font-size:2rem;color:#F59E0B;"></i>
+                    <h4 style="margin-top:8px;">Avg Rating</h4>
+                    <p style="font-size:0.8rem;color:var(--text-secondary);">4.8 ⭐</p>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h2><i class="fas fa-clock"></i> Recent Activity</h2>
+                </div>
+                <div id="recentActivity">
+                    <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading activity...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+        TAB 2: USERS
+        ============================================================ -->
+        <div class="tab-content" id="tab-users">
+            <div class="table-container">
+                <div class="table-header">
+                    <h2><i class="fas fa-users"></i> Users</h2>
+                    <div class="table-filters">
+                        <select id="userRoleFilter" onchange="filterUsers()">
+                            <option value="all">All Roles</option>
+                            <option value="user">Users</option>
+                            <option value="provider">Providers</option>
+                            <option value="admin">Admins</option>
+                        </select>
+                        <input type="text" id="userSearch" placeholder="Search user..." onkeyup="filterUsers()" />
+                    </div>
+                </div>
+                <div id="usersTable">
+                    <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading users...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+        TAB 3: PROVIDERS
+        ============================================================ -->
+        <div class="tab-content" id="tab-providers">
+            <div class="table-container">
+                <div class="table-header">
+                    <h2><i class="fas fa-user-tie"></i> Providers</h2>
+                    <div class="table-filters">
+                        <select id="providerStatusFilter" onchange="filterProviders()">
+                            <option value="all">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                            <option value="suspended">Suspended</option>
+                        </select>
+                        <input type="text" id="providerSearch" placeholder="Search provider..." onkeyup="filterProviders()" />
+                    </div>
+                </div>
+                <div id="providersTable">
+                    <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading providers...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+        TAB 4: BOOKINGS
+        ============================================================ -->
+        <div class="tab-content" id="tab-bookings">
+            <div class="table-container">
+                <div class="table-header">
+                    <h2><i class="fas fa-calendar-check"></i> Bookings</h2>
+                    <div class="table-filters">
+                        <select id="bookingStatusFilter" onchange="filterBookings()">
+                            <option value="all">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="accepted">Accepted</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                        <input type="text" id="bookingSearch" placeholder="Search booking..." onkeyup="filterBookings()" />
+                    </div>
+                </div>
+                <div id="bookingsTable">
+                    <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading bookings...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+        TAB 5: PAYMENTS
+        ============================================================ -->
+        <div class="tab-content" id="tab-payments">
+            <div class="table-container">
+                <div class="table-header">
+                    <h2><i class="fas fa-credit-card"></i> Payments</h2>
+                    <div class="table-filters">
+                        <select id="paymentStatusFilter" onchange="filterPayments()">
+                            <option value="all">All Status</option>
+                            <option value="success">Success</option>
+                            <option value="pending">Pending</option>
+                            <option value="failed">Failed</option>
+                            <option value="refunded">Refunded</option>
+                        </select>
+                        <input type="text" id="paymentSearch" placeholder="Search payment..." onkeyup="filterPayments()" />
+                    </div>
+                </div>
+                <div id="paymentsTable">
+                    <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading payments...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+        TAB 6: WAITLIST
+        ============================================================ -->
+        <div class="tab-content" id="tab-waitlist">
+            <div class="table-container">
+                <div class="table-header">
+                    <h2><i class="fas fa-list"></i> Waitlist</h2>
+                    <div class="table-filters">
+                        <select id="waitlistStatusFilter" onchange="filterWaitlist()">
+                            <option value="all">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="contacted">Contacted</option>
+                            <option value="converted">Converted</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                        <input type="text" id="waitlistSearch" placeholder="Search waitlist..." onkeyup="filterWaitlist()" />
+                    </div>
+                </div>
+                <div id="waitlistTable">
+                    <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading waitlist...</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ============================================================
+    JAVASCRIPT
+    ============================================================ -->
+    <script>
+        // ============================================================
+        // CONFIGURATION
+        // ============================================================
+        const API_URL = window.location.hostname === 'localhost'
+            ? 'http://localhost:5000/api'
+            : 'https://api.emergencyhub.in/api';
+
+        let adminToken = localStorage.getItem('adminToken') || '';
+
+        // ============================================================
+        // SAMPLE DATA (For Demo)
+        // ============================================================
+        const sampleUsers = [
+            { id: 1, name: 'Poonam Sahu', email: 'poonam@email.com', phone: '9876543210', city: 'Bhopal', role: 'admin',
+                membership: 'pro', status: 'active', joined: '2024-06-01' },
+            { id: 2, name: 'Rahul Kumar', email: 'rahul@email.com', phone: '9876543211', city: 'Delhi', role: 'user',
+                membership: 'free', status: 'active', joined: '2024-06-02' },
+            { id: 3, name: 'Priya Singh', email: 'priya@email.com', phone: '9876543212', city: 'Mumbai', role: 'user',
+                membership: 'pro', status: 'active', joined: '2024-06-03' },
+            { id: 4, name: 'Rakesh Sharma', email: 'rakesh@email.com', phone: '9876543213', city: 'Bhopal', role: 'provider',
+                membership: 'pro', status: 'active', joined: '2024-06-04' },
+            { id: 5, name: 'Suresh Patel', email: 'suresh@email.com', phone: '9876543214', city: 'Indore', role: 'provider',
+                membership: 'free', status: 'active', joined: '2024-06-05' },
+        ];
+
+        const sampleProviders = [
+            { id: 1, name: 'Rakesh Sharma', business: 'Rakesh Garage', city: 'Bhopal', services: ['Mechanic', 'Towing'],
+                rating: 4.8, jobs: 120, status: 'approved', joined: '2024-06-04' },
+            { id: 2, name: 'Suresh Patel', business: 'Suresh Electricians', city: 'Indore', services: ['Electrician'],
+                rating: 4.5, jobs: 85, status: 'approved', joined: '2024-06-05' },
+            { id: 3, name: 'Vikram Singh', business: 'Vikram Plumbers', city: 'Bhopal', services: ['Plumber'], rating: 4.2,
+                jobs: 45, status: 'pending', joined: '2024-06-08' },
+        ];
+
+        const sampleBookings = [
+            { id: 1, customer: 'Rahul Kumar', service: 'Mechanic', provider: 'Rakesh Sharma', city: 'Delhi', amount: 499,
+                status: 'completed', date: '2024-06-10' },
+            { id: 2, customer: 'Priya Singh', service: 'Electrician', provider: 'Suresh Patel', city: 'Mumbai', amount: 499,
+                status: 'pending', date: '2024-06-11' },
+            { id: 3, customer: 'Amit Verma', service: 'Plumber', provider: 'Vikram Singh', city: 'Delhi', amount: 499,
+                status: 'accepted', date: '2024-06-12' },
+        ];
+
+        const samplePayments = [
+            { id: 1, orderId: 'ORD001', customer: 'Rahul Kumar', amount: 499, commission: 49, netAmount: 450,
+                method: 'Razorpay', status: 'success', date: '2024-06-10' },
+            { id: 2, orderId: 'ORD002', customer: 'Priya Singh', amount: 499, commission: 49, netAmount: 450,
+                method: 'UPI', status: 'pending', date: '2024-06-11' },
+            { id: 3, orderId: 'ORD003', customer: 'Amit Verma', amount: 499, commission: 49, netAmount: 450,
+                method: 'Cash on Service', status: 'pending', date: '2024-06-12' },
+        ];
+
+        const sampleWaitlist = [
+            { id: 1, email: 'test1@email.com', name: 'Test User 1', city: 'Delhi', plan: 'pro', status: 'pending',
+                joined: '2024-06-01' },
+            { id: 2, email: 'test2@email.com', name: 'Test User 2', city: 'Mumbai', plan: 'free', status: 'contacted',
+                joined: '2024-06-02' },
+            { id: 3, email: 'test3@email.com', name: 'Test User 3', city: 'Bhopal', plan: 'pro', status: 'converted',
+                joined: '2024-06-03' },
+        ];
+
+        // ============================================================
+        // LOGIN / LOGOUT
+        // ============================================================
+        function login() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+
+            if (!email || !password) {
+                showToast('Please enter email and password', 'error');
+                return;
+            }
+
+            // Demo login - in production, call API
+            if (email === 'admin@emergencyhub.in' && password === 'SecurePassword123') {
+                adminToken = 'demo_token_12345';
+                localStorage.setItem('adminToken', adminToken);
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                showToast('✅ Login successful!', 'success');
+                loadData();
+            } else {
+                showToast('❌ Invalid credentials', 'error');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('adminToken');
+            adminToken = '';
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('loginOverlay').style.display = 'flex';
+            showToast('👋 Logged out successfully', 'success');
+        }
+
+        // Enter key to login
+        document.getElementById('loginPassword').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') login();
+        });
+        document.getElementById('loginEmail').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') login();
+        });
+
+        // ============================================================
+        // TABS
+        // ============================================================
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+            document.getElementById('tab-' + tab).classList.add('active');
+            document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`).classList.add('active');
+        }
+
+        // ============================================================
+        // LOAD DATA
+        // ============================================================
+        function loadData() {
+            if (!adminToken) {
+                logout();
+                return;
+            }
+
+            updateStats();
+            renderUsers(sampleUsers);
+            renderProviders(sampleProviders);
+            renderBookings(sampleBookings);
+            renderPayments(samplePayments);
+            renderWaitlist(sampleWaitlist);
+            renderRecentActivity();
+        }
+
+        function refreshData() {
+            loadData();
+            showToast('✅ Data refreshed!', 'success');
+        }
+
+        // ============================================================
+        // UPDATE STATS
+        // ============================================================
+        function updateStats() {
+            const totalUsers = sampleUsers.length;
+            const totalProviders = sampleProviders.length;
+            const totalBookings = sampleBookings.length;
+            const totalRevenue = samplePayments.filter(p => p.status === 'success').reduce((sum, p) => sum + p.amount, 0);
+            const totalCommission = samplePayments.filter(p => p.status === 'success').reduce((sum, p) => sum + p.commission,
+            0);
+            const totalPayout = samplePayments.filter(p => p.status === 'success').reduce((sum, p) => sum + p.netAmount, 0);
+
+            document.getElementById('statUsers').textContent = totalUsers;
+            document.getElementById('statProviders').textContent = totalProviders;
+            document.getElementById('statBookings').textContent = totalBookings;
+            document.getElementById('statRevenue').textContent = '₹' + totalRevenue.toLocaleString();
+            document.getElementById('statCommission').textContent = '₹' + totalCommission.toLocaleString();
+            document.getElementById('statPayout').textContent = '₹' + totalPayout.toLocaleString();
+        }
+
+        // ============================================================
+        // RENDER USERS
+        // ============================================================
+        function renderUsers(data) {
+            const container = document.getElementById('usersTable');
+            if (!data || data.length === 0) {
+                container.innerHTML =
+                    `<div class="loading"><i class="fas fa-inbox"></i> No users found</div>`;
+                return;
+            }
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>City</th>
+                            <th>Role</th>
+                            <th>Membership</th>
+                            <th>Status</th>
+                            <th>Joined</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            data.forEach((u, i) => {
+                const statusClass = u.status === 'active' ? 'badge-success' : 'badge-danger';
+                const roleClass = u.role === 'admin' ? 'badge-primary' : u.role === 'provider' ? 'badge-info' :
+                    'badge-success';
+
+                html += `
+                    <tr>
+                        <td>${i + 1}</td>
+                        <td><strong>${u.name}</strong></td>
+                        <td>${u.email}</td>
+                        <td>${u.phone}</td>
+                        <td>${u.city}</td>
+                        <td><span class="badge ${roleClass}">${u.role}</span></td>
+                        <td><span class="badge ${u.membership === 'pro' ? 'badge-success' : 'badge-warning'}">${u.membership}</span></td>
+                        <td><span class="badge ${statusClass}">${u.status}</span></td>
+                        <td>${u.joined}</td>
+                        <td class="status-actions">
+                            <button class="btn-sm-primary" onclick="showToast('Edit user ${u.id}','info')"><i class="fas fa-edit"></i></button>
+                            <button class="btn-sm-danger" onclick="showToast('Delete user ${u.id}','error')"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function filterUsers() {
+            const role = document.getElementById('userRoleFilter').value;
+            const search = document.getElementById('userSearch').value.toLowerCase();
+            let filtered = sampleUsers;
+            if (role !== 'all') filtered = filtered.filter(u => u.role === role);
+            if (search) filtered = filtered.filter(u =>
+                u.name.toLowerCase().includes(search) || u.email.toLowerCase().includes(search)
+            );
+            renderUsers(filtered);
+        }
+
+        // ============================================================
+        // RENDER PROVIDERS
+        // ============================================================
+        function renderProviders(data) {
+            const container = document.getElementById('providersTable');
+            if (!data || data.length === 0) {
+                container.innerHTML =
+                    `<div class="loading"><i class="fas fa-inbox"></i> No providers found</div>`;
+                return;
+            }
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Business</th>
+                            <th>City</th>
+                            <th>Services</th>
+                            <th>Rating</th>
+                            <th>Jobs</th>
+                            <th>Status</th>
+                            <th>Joined</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            data.forEach((p, i) => {
+                const statusClass = p.status === 'approved' ? 'badge-success' : p.status === 'pending' ?
+                    'badge-warning' : 'badge-danger';
+
+                html += `
+                    <tr>
+                        <td>${i + 1}</td>
+                        <td><strong>${p.name}</strong></td>
+                        <td>${p.business}</td>
+                        <td>${p.city}</td>
+                        <td>${p.services.join(', ')}</td>
+                        <td>⭐ ${p.rating}</td>
+                        <td>${p.jobs}</td>
+                        <td><span class="badge ${statusClass}">${p.status}</span></td>
+                        <td>${p.joined}</td>
+                        <td class="status-actions">
+                            <button class="btn-sm-success" onclick="showToast('Approve provider ${p.id}','success')"><i class="fas fa-check"></i></button>
+                            <button class="btn-sm-danger" onclick="showToast('Reject provider ${p.id}','error')"><i class="fas fa-times"></i></button>
+                            <button class="btn-sm-primary" onclick="showToast('Verify documents of ${p.name}','info')"><i class="fas fa-file-alt"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function filterProviders() {
+            const status = document.getElementById('providerStatusFilter').value;
+            const search = document.getElementById('providerSearch').value.toLowerCase();
+            let filtered = sampleProviders;
+            if (status !== 'all') filtered = filtered.filter(p => p.status === status);
+            if (search) filtered = filtered.filter(p =>
+                p.name.toLowerCase().includes(search) || p.business.toLowerCase().includes(search)
+            );
+            renderProviders(filtered);
+        }
+
+        // ============================================================
+        // RENDER BOOKINGS
+        // ============================================================
+        function renderBookings(data) {
+            const container = document.getElementById('bookingsTable');
+            if (!data || data.length === 0) {
+                container.innerHTML =
+                    `<div class="loading"><i class="fas fa-inbox"></i> No bookings found</div>`;
+                return;
+            }
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Customer</th>
+                            <th>Service</th>
+                            <th>Provider</th>
+                            <th>City</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            data.forEach((b, i) => {
+                const statusClass = b.status === 'completed' ? 'badge-success' : b.status === 'pending' ?
+                    'badge-warning' : 'badge-primary';
+
+                html += `
+                    <tr>
+                        <td>${i + 1}</td>
+                        <td><strong>${b.customer}</strong></td>
+                        <td>${b.service}</td>
+                        <td>${b.provider}</td>
+                        <td>${b.city}</td>
+                        <td>₹${b.amount}</td>
+                        <td><span class="badge ${statusClass}">${b.status}</span></td>
+                        <td>${b.date}</td>
+                        <td class="status-actions">
+                            <button class="btn-sm-primary" onclick="showToast('View booking ${b.id}','info')"><i class="fas fa-eye"></i></button>
+                            <button class="btn-sm-success" onclick="showToast('Update status of booking ${b.id}','success')"><i class="fas fa-pen"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function filterBookings() {
+            const status = document.getElementById('bookingStatusFilter').value;
+            const search = document.getElementById('bookingSearch').value.toLowerCase();
+            let filtered = sampleBookings;
+            if (status !== 'all') filtered = filtered.filter(b => b.status === status);
+            if (search) filtered = filtered.filter(b =>
+                b.customer.toLowerCase().includes(search) || b.service.toLowerCase().includes(search)
+            );
+            renderBookings(filtered);
+        }
+
+        // ============================================================
+        // RENDER PAYMENTS
+        // ============================================================
+        function renderPayments(data) {
+            const container = document.getElementById('paymentsTable');
+            if (!data || data.length === 0) {
+                container.innerHTML =
+                    `<div class="loading"><i class="fas fa-inbox"></i> No payments found</div>`;
+                return;
+            }
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Amount</th>
+                            <th>Commission</th>
+                            <th>Net Amount</th>
+                            <th>Method</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            data.forEach((p, i) => {
+                const statusClass = p.status === 'success' ? 'badge-success' : p.status === 'pending' ?
+                    'badge-warning' : 'badge-danger';
+
+                html += `
+                    <tr>
+                        <td>${i + 1}</td>
+                        <td><strong>${p.orderId}</strong></td>
+                        <td>${p.customer}</td>
+                        <td>₹${p.amount}</td>
+                        <td>₹${p.commission}</td>
+                        <td>₹${p.netAmount}</td>
+                        <td><span class="badge badge-primary">${p.method}</span></td>
+                        <td><span class="badge ${statusClass}">${p.status}</span></td>
+                        <td>${p.date}</td>
+                        <td class="status-actions">
+                            <button class="btn-sm-primary" onclick="showToast('View payment ${p.id}','info')"><i class="fas fa-eye"></i></button>
+                            <button class="btn-sm-danger" onclick="showToast('Refund payment ${p.id}','error')"><i class="fas fa-undo"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function filterPayments() {
+            const status = document.getElementById('paymentStatusFilter').value;
+            const search = document.getElementById('paymentSearch').value.toLowerCase();
+            let filtered = samplePayments;
+            if (status !== 'all') filtered = filtered.filter(p => p.status === status);
+            if (search) filtered = filtered.filter(p =>
+                p.customer.toLowerCase().includes(search) || p.orderId.toLowerCase().includes(search)
+            );
+            renderPayments(filtered);
+        }
+
+        // ============================================================
+        // RENDER WAITLIST
+        // ============================================================
+        function renderWaitlist(data) {
+            const container = document.getElementById('waitlistTable');
+            if (!data || data.length === 0) {
+                container.innerHTML =
+                    `<div class="loading"><i class="fas fa-inbox"></i> No waitlist entries</div>`;
+                return;
+            }
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Email</th>
+                            <th>Name</th>
+                            <th>City</th>
+                            <th>Plan</th>
+                            <th>Status</th>
+                            <th>Joined</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            data.forEach((w, i) => {
+                const statusClass = w.status === 'converted' ? 'badge-success' : w.status === 'contacted' ?
+                    'badge-primary' : w.status === 'pending' ? 'badge-warning' : 'badge-danger';
+
+                html += `
+                    <tr>
+                        <td>${i + 1}</td>
+                        <td><strong>${w.email}</strong></td>
+                        <td>${w.name}</td>
+                        <td>${w.city}</td>
+                        <td><span class="badge ${w.plan === 'pro' ? 'badge-success' : 'badge-warning'}">${w.plan}</span></td>
+                        <td><span class="badge ${statusClass}">${w.status}</span></td>
+                        <td>${w.joined}</td>
+                        <td class="status-actions">
+                            <button class="btn-sm-success" onclick="showToast('Contacted ${w.name}','success')"><i class="fas fa-phone"></i></button>
+                            <button class="btn-sm-primary" onclick="showToast('Convert ${w.name} to customer','info')"><i class="fas fa-user-plus"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function filterWaitlist() {
+            const status = document.getElementById('waitlistStatusFilter').value;
+            const search = document.getElementById('waitlistSearch').value.toLowerCase();
+            let filtered = sampleWaitlist;
+            if (status !== 'all') filtered = filtered.filter(w => w.status === status);
+            if (search) filtered = filtered.filter(w =>
+                w.email.toLowerCase().includes(search) || w.name.toLowerCase().includes(search)
+            );
+            renderWaitlist(filtered);
+        }
+
+        // ============================================================
+        // RENDER RECENT ACTIVITY
+        // ============================================================
+        function renderRecentActivity() {
+            const container = document.getElementById('recentActivity');
+            const activities = [
+                { icon: 'fa-user-plus', text: 'New user registered: Rahul Kumar', time: '2 minutes ago',
+                    color: '#22C55E' },
+                { icon: 'fa-calendar-check', text: 'New booking created: Mechanic service', time: '15 minutes ago',
+                    color: '#3B82F6' },
+                { icon: 'fa-check-circle', text: 'Booking completed: Electrician service', time: '1 hour ago',
+                    color: '#22C55E' },
+                { icon: 'fa-credit-card', text: 'Payment received: ₹499 from Priya Singh', time: '2 hours ago',
+                    color: '#F59E0B' },
+                { icon: 'fa-user-tie', text: 'New provider registered: Vikram Singh', time: '3 hours ago',
+                    color: '#8B5CF6' },
+            ];
+
+            let html = '';
+            activities.forEach(a => {
+                html += `
+                    <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);">
+                        <div style="width:36px;height:36px;border-radius:50%;background:${a.color}20;display:flex;align-items:center;justify-content:center;color:${a.color};">
+                            <i class="fas ${a.icon}"></i>
+                        </div>
+                        <div style="flex:1;">
+                            <div style="font-weight:500;">${a.text}</div>
+                            <div style="font-size:0.75rem;color:var(--text-muted);">${a.time}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // ============================================================
+        // EXPORT DATA
+        // ============================================================
+        function exportAllData() {
+            const data = {
+                users: sampleUsers,
+                providers: sampleProviders,
+                bookings: sampleBookings,
+                payments: samplePayments,
+                waitlist: sampleWaitlist,
+                stats: {
+                    totalUsers: sampleUsers.length,
+                    totalProviders: sampleProviders.length,
+                    totalBookings: sampleBookings.length,
+                    revenue: samplePayments.filter(p => p.status === 'success').reduce((sum, p) => sum + p.amount, 0),
+                    commission: samplePayments.filter(p => p.status === 'success').reduce((sum, p) => sum + p
+                    .commission, 0),
+                    payout: samplePayments.filter(p => p.status === 'success').reduce((sum, p) => sum + p.netAmount,
+                    0),
+                }
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `emergencyhub_export_${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('✅ Data exported successfully!', 'success');
+        }
+
+        // ============================================================
+        // TOAST
+        // ============================================================
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            const icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' :
+                'fa-info-circle';
+            toast.innerHTML = `
+                <i class="fas ${icon}"></i>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100px)';
+                setTimeout(() => toast.remove(), 400);
+            }, 4000);
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        if (localStorage.getItem('adminToken')) {
+            adminToken = localStorage.getItem('adminToken');
+            document.getElementById('loginOverlay').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+            loadData();
+        }
+
+        // Auto refresh every 30 seconds
+        setInterval(() => {
+            if (adminToken) loadData();
+        }, 30000);
+
+        // Expose functions globally
+        window.login = login;
+        window.logout = logout;
+        window.switchTab = switchTab;
+        window.refreshData = refreshData;
+        window.exportAllData = exportAllData;
+        window.filterUsers = filterUsers;
+        window.filterProviders = filterProviders;
+        window.filterBookings = filterBookings;
+        window.filterPayments = filterPayments;
+        window.filterWaitlist = filterWaitlist;
+        window.showToast = showToast;
+        window.loadData = loadData;
+    </script>
+
+</body>
+</html>
