@@ -10,95 +10,98 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // ============================================================
-// MIDDLEWARE (Pehle yeh aana chahiye)
+// MIDDLEWARE
 // ============================================================
 app.use(helmet());
-app.use(cors({ origin: '*', credentials: true }));
+app.use(cors({
+    origin: '*',
+    credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ============================================================
-// DATABASE CONNECTION
+// DATABASE
 // ============================================================
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
+mongoose.connect(process.env.MONGODB_URI)
 .then(() => console.log('✅ MongoDB Connected'))
-.catch(err => console.log('❌ MongoDB Error:', err));
+.catch(err => console.log('❌ MongoDB Error:', err.message));
 
 // ============================================================
-// ROUTES (Routes yahan aani chahiye)
+// ROUTES
 // ============================================================
+
 const userRoutes = require('./routes/users');
-
-// Use routes
-app.use('/api/users', userRoutes);
-// After other route imports
-const paymentRoutes = require('./routes/payments');
+const paymentRoutes = require('./routes/payment');
 const trackingRoutes = require('./routes/tracking');
+const receiptRoutes = require('./routes/receipt');
+const aiRoutes = require('./routes/ai');
+const membershipRoutes = require('./routes/membership');
 
-// Add routes
+// ==================
+// REGISTER ROUTES
+// ==================
+
+app.use('/api/users', userRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/tracking', trackingRoutes);
+app.use('/api/receipts', receiptRoutes);
+app.use('/api/ai', aiRoutes);
+app.use('/api/membership', membershipRoutes);
+
 // ============================================================
-// ROOT & HEALTH ROUTES
+// ROOT
 // ============================================================
+
 app.get('/', (req, res) => {
-  res.json({
-    name: 'EmergencyHub API',
-    version: '1.0.0',
-    status: '🚀 Running'
-  });
+    res.json({
+        success: true,
+        name: 'EmergencyHub API',
+        version: '1.0.0',
+        status: 'Running'
+    });
 });
+
+// ============================================================
+// HEALTH CHECK
+// ============================================================
 
 app.get('/api/health', (req, res) => {
-  res.json({
-    status: 'OK',
-    message: 'EmergencyHub API is running 🚀',
-    timestamp: new Date().toISOString()
-  });
+    res.json({
+        success: true,
+        status: 'OK',
+        timestamp: new Date()
+    });
 });
 
 // ============================================================
-// 404 & ERROR HANDLING
+// 404
 // ============================================================
+
 app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: 'Route not found'
-  });
+    res.status(404).json({
+        success: false,
+        message: 'Route not found'
+    });
 });
+
+// ============================================================
+// ERROR HANDLER
+// ============================================================
 
 app.use((err, req, res, next) => {
-  console.error('❌ Server Error:', err);
-  res.status(500).json({
-    success: false,
-    message: 'Internal server error'
-  });
+    console.error(err);
+
+    res.status(500).json({
+        success: false,
+        message: 'Internal Server Error'
+    });
 });
 
 // ============================================================
 // START SERVER
 // ============================================================
+
 app.listen(PORT, () => {
-  console.log(`🚀 EmergencyHub API running on port ${PORT}`);
-  console.log(`📡 http://localhost:${PORT}`);
-  console.log(`📊 Health: http://localhost:${PORT}/api/health`);
+    console.log(`🚀 EmergencyHub running on port ${PORT}`);
 });
-// Add these to backend/server.js
-const providerRoutes = require('./routes/providers');
-const receiptRoutes = require('./routes/receipts');
-
-app.use('/api/providers', providerRoutes);
-app.use('/api/receipts', receiptRoutes);
-// Add these routes to backend/server.js
-const aiRoutes = require('./routes/ai');
-const membershipRoutes = require('./routes/membership');
-
-app.use('/api/ai', aiRoutes);
-app.use('/api/membership', membershipRoutes);
-// Add to server.js
-const paymentRoutes = require('./routes/payments');
-
-app.use('/api/payments', paymentRoutes);

@@ -4,9 +4,7 @@ const Payment = require('../models/Payment');
 const Booking = require('../models/Booking');
 const User = require('../models/User');
 const Receipt = require('../models/Receipt');
-const auth = require('../middleware/auth');
-const { admin } = require('../middleware/admin');
-
+const { auth, admin } = require('../middleware/auth');
 // ============================================================
 // 1. GENERATE UPI PAYMENT
 // ============================================================
