@@ -2442,58 +2442,68 @@
         let subscribers = JSON.parse(localStorage.getItem('emergencyhub_waitlist') || '[]');
         updateCount();
         updateSpots();
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = emailInput.value.trim();
-            const city = cityInput.value.trim() || 'India';
+    const name = nameInput.value.trim();
+    const email = emailInput.value.trim();
+    const city = cityInput.value.trim() || 'India';
 
-            if (!email || !email.includes('@')) {
-                showToast('Please enter a valid email address.', true);
-                return;
-            }
+    if (!name) {
+        showToast('Please enter your name.', true);
+        return;
+    }
 
-            if (subscribers.includes(email)) {
-                showToast('✅ You\'re already on the list!', false);
-                emailInput.value = '';
-                return;
-            }
+    if (!email || !email.includes('@')) {
+        showToast('Please enter a valid email address.', true);
+        return;
+    }
 
-            try {
-                const response = await fetch(`${API_URL}/waitlist`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email,
-                        name: email.split('@')[0],
-                        city,
-                        source: 'Website'
-                    })
-                });
+    if (subscribers.includes(email)) {
+        showToast("✅ You're already on the list!", false);
+        return;
+    }
 
-                const data = await response.json();
-                if (data.success) {
-                    subscribers.push(email);
-                    localStorage.setItem('emergencyhub_waitlist', JSON.stringify(subscribers));
-                    updateCount();
-                    updateSpots();
-                    showToast(`✅ You're on the list! (${email})`, false);
-                    emailInput.value = '';
-                    cityInput.value = '';
-                } else {
-                    showToast(data.message || 'Something went wrong.', true);
-                }
-            } catch (error) {
-                subscribers.push(email);
-                localStorage.setItem('emergencyhub_waitlist', JSON.stringify(subscribers));
-                updateCount();
-                updateSpots();
-                showToast(`✅ You're on the list! (${email})`, false);
-                emailInput.value = '';
-                cityInput.value = '';
-                console.log('Backend not available, saved locally');
-            }
+    try {
+        const response = await fetch(`${API_URL}/waitlist`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+    name: email.split('@')[0],
+    email,
+    address: city
+})
         });
+
+        const data = await response.json();
+
+        if (data.success) {
+            subscribers.push(email);
+            localStorage.setItem(
+                'emergencyhub_waitlist',
+                JSON.stringify(subscribers)
+            );
+
+            updateCount();
+            updateSpots();
+
+            showToast(`✅ Welcome ${name}! You're on the waitlist.`, false);
+
+            nameInput.value = '';
+            emailInput.value = '';
+            cityInput.value = '';
+
+        } else {
+            showToast(data.message || 'Something went wrong.', true);
+        }
+
+    } catch (error) {
+        console.error(error);
+        showToast('Unable to connect to server.', true);
+    }
+});
 
         function updateCount() {
             subscriberCountEl.textContent = subscribers.length;
