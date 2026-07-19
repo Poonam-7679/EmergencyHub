@@ -978,11 +978,10 @@
         // ============================================================
         // CONFIGURATION
         // ============================================================
-        const API_URL = window.location.hostname === 'localhost'
-    ? 'http://localhost:5000/api'
-    : 'https://emergencyhub-1.onrender.com/api';
-        let adminToken = localStorage.getItem('adminToken') || '';
-
+        const API_URL =
+    window.location.hostname === 'localhost'
+        ? 'http://localhost:5000/api'
+        : 'https://emergencyhub-1.onrender.com/api';
         // ============================================================
         // SAMPLE DATA (For Demo)
         // ============================================================
