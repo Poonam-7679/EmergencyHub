@@ -2156,12 +2156,31 @@
                 </div>
                 
                 <form class="waitlist-form" id="waitlistForm">
-                    <input type="email" id="emailInput" placeholder="Enter your email" required />
-                    <input type="text" id="cityInput" placeholder="Your city" />
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-bolt"></i> Join Now
-                    </button>
-                </form>
+    <input
+        type="text"
+        id="nameInput"
+        placeholder="Enter your name"
+        required
+    />
+
+    <input
+        type="email"
+        id="emailInput"
+        placeholder="Enter your email"
+        required
+    />
+
+    <input
+        type="text"
+        id="cityInput"
+        placeholder="Your address or city"
+        required
+    />
+
+    <button type="submit" class="btn btn-primary">
+        <i class="fas fa-bolt"></i> Join Now
+    </button>
+</form>
                 
                 <div style="margin-top:16px;font-size:0.75rem;color:#64748B;">
                     <i class="fas fa-users"></i> Already <strong id="subscriberCount" style="color:#fff;">0</strong> members joined
@@ -2438,6 +2457,7 @@
         const toastMessage = document.getElementById('toastMessage');
         const subscriberCountEl = document.getElementById('subscriberCount');
         const spotsLeftEl = document.getElementById('spotsLeft');
+        const nameInput = document.getElementById('nameInput');
 
         let subscribers = JSON.parse(localStorage.getItem('emergencyhub_waitlist') || '[]');
         updateCount();
@@ -2471,10 +2491,10 @@ form.addEventListener('submit', async (e) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-    name: email.split('@')[0],
-    email,
-    address: city
-})
+                 name,
+                 email,
+                 address: city
+            })
         });
 
         const data = await response.json();
